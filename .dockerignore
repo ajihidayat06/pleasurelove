@@ -1,0 +1,16 @@
+# Ignore Go build artifacts
+*.exe
+*.out
+*.o
+
+# Ignore vendor directory
+vendor/
+
+# Ignore git files
+.git
+.gitignore
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.swp

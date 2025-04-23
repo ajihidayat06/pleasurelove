@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Docker Debug",
+      "type": "go",
+      "request": "attach",
+      "mode": "remote",
+      "remotePath": "/app", // Path di dalam container
+      "port": 40000,       // Port debugging yang diekspos
+      "host": "127.0.0.1", // Gunakan IP Docker host jika bukan localhost
+      "program": "${workspaceFolder}"
+    }
+  ]
+}
