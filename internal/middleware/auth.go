@@ -319,3 +319,68 @@ func IsTokenInRedis(ctx context.Context, token string) (bool, error) {
 func DeleteTokenFromRedis(ctx context.Context, token string) error {
 	return redis.DeleteFromRedis(ctx, token)
 }
+
+func GenerateGuestTemporaryToken(user models.UserLogin) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id":   user.ID,
+		"role_id":   user.RoleID,
+		"role_code": user.RoleCode,
+		"exp":       time.Now().Add(time.Minute * 5).Unix(), // Temporary token berlaku 5 menit
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	secret := utils.GetOSEnvGuestSecretKey()
+	return token.SignedString([]byte(secret))
+}
+
+func ValidateGuestTemporaryToken(temporaryToken string) (models.UserLogin, error) {
+	secret := utils.GetOSEnvGuestSecretKey()
+
+	token, err := jwt.Parse(temporaryToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(secret), nil
+	})
+	if err != nil {
+		return models.UserLogin{}, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return models.UserLogin{}, errors.New("invalid token")
+	}
+
+	// Ambil data user dari token
+	user := models.UserLogin{
+		ID:       int64(claims["user_id"].(float64)),
+		RoleID:   int64(claims["role_id"].(float64)),
+		RoleCode: claims["role_code"].(string),
+	}
+
+	return user, nil
+}
+
+func GenerateGuestTokenUserDashboard(user models.UserLogin) (string, error) {
+	var permissions []map[string]interface{}
+	for _, rolePermission := range user.RolePermissions {
+		permissions = append(permissions, map[string]interface{}{
+			"group_menu":   rolePermission.Permissions.GroupMenu,
+			"action":       rolePermission.Permissions.Action,
+			"access_scope": rolePermission.AccessScope, // Ambil AccessScope dari RolePermissions
+		})
+	}
+
+	claims := jwt.MapClaims{
+		"user_id":          user.ID,
+		"role_id":          user.RoleID,
+		"role_name":        user.RoleName,
+		"role_code":        user.RoleCode,
+		"role_permissions": permissions,                           // Simpan permissions dalam bentuk slice dari map
+		"exp":              time.Now().Add(time.Hour * 24).Unix(), // Token berlaku 24 jam
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	secret := utils.GetOSEnvGuestSecretKey()
+	return token.SignedString([]byte(secret))
+}

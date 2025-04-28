@@ -2,7 +2,6 @@ package router
 
 import (
 	"pleasurelove/internal/controllers"
-	"pleasurelove/internal/middleware"
 	"pleasurelove/pkg/redis"
 
 	"github.com/gofiber/fiber/v2"
@@ -44,14 +43,12 @@ func DashboardRoute(app *fiber.App, db *gorm.DB) {
 }
 
 func WebRoute(app *fiber.App, db *gorm.DB) {
+	auth := InitAuthWeb(db)
 	user := InitUser(db)
 
 	api := app.Group("/api/v1")
 
-	api.Post("/login", user.Login)
-	api.Post("/register", user.Register)
-	api.Post("/logout", middleware.AuthMiddleware(), user.Logout)
-
+	AuthRoutesWeb(api, auth)
 	// Protected routes
 	UserRoutesWeb(api, user)
 }

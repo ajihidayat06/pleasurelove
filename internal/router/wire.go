@@ -78,3 +78,12 @@ func InitProductDashboard(db *gorm.DB) *dashboard.ProductDashboardController {
 
 	return productController
 }
+
+// Note: Web Init Route
+func InitAuthWeb(db *gorm.DB) *controllers.AuthController {
+	userRepo := repo.NewUserRepository(db)
+	authUC := usecase.NewAuthUseCase(db, userRepo)
+	authController := controllers.NewAuthController(authUC)
+
+	return authController
+}

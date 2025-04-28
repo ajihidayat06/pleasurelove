@@ -125,3 +125,15 @@ func GenerateSlug(input string) string {
 func RoundTo2Digits(value float64) float64 {
 	return math.Round(value*100) / 100
 }
+
+func ValidatePhone(phone string) error {
+	phone = strings.TrimSpace(phone)
+
+	// Regular expression: start with optional +, followed by digits only
+	re := regexp.MustCompile(constanta.PhoneRegex) // min 7, max 15 digits (standar umum telepon)
+
+	if !re.MatchString(phone) {
+		return errors.New("format nomor telepon tidak valid (hanya angka, panjang 7-15 karakter)")
+	}
+	return nil
+}

@@ -83,6 +83,47 @@ INSERT INTO permissions (code, name, group_menu, action, created_by, updated_by)
 ('role_permissions:update', 'Permission to update role permissions data (role_permissions-update)', 'role_permissions', 'update', 1, 1),
 ('role_permissions:delete', 'Permission to delete role permissions data (role_permissions-delete)', 'role_permissions', 'delete', 1, 1);
 
+CREATE TABLE IF NOT EXISTS customer (
+    id bigserial NOT NULL,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    user_id INTEGER REFERENCES "user"(id) ON DELETE SET NULL,
+    is_guest BOOLEAN,
+    guest_token VARCHAR,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INTEGER,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INTEGER,
+    CONSTRAINT customer_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS addresses (
+    id BIGSERIAL,
+    user_id BIGINT,
+    customer_id BIGINT,
+    label VARCHAR(50), -- e.g. Rumah, Kantor
+    recipient_name VARCHAR(100),
+    phone_number VARCHAR(20),
+    address_line1 VARCHAR(255) NOT NULL,
+    address_line2 VARCHAR(255), -- optional
+    subdistrict VARCHAR(100),
+    city VARCHAR(100),
+    province VARCHAR(100),
+    postal_code VARCHAR(10),
+    country VARCHAR(100) DEFAULT 'Indonesia',
+    is_default BOOLEAN DEFAULT FALSE,
+    address_type VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INTEGER,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INTEGER,
+    CONSTRAINT addresses_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
+    CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE,
+    CONSTRAINT chk_address_type CHECK (address_type IN ('shipping', 'billing', 'store'))
+);
+
 
 CREATE TABLE IF NOT EXISTS categories (
     id bigserial NOT NULL,
@@ -151,7 +192,3 @@ CREATE TABLE IF NOT EXISTS product_varian (
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS role_permissions;
-DROP TABLE IF EXISTS permissions;
-DROP TABLE IF EXISTS roles;
-DROP TABLE IF EXISTS users;

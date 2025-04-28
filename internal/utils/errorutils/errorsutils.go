@@ -35,6 +35,7 @@ var (
 	ErrPasswordNotValid    = errors.New("password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters")
 	ErrDataDataUpdated     = errors.New(ErrMessageDataUpdated)
 	ErrDataAlreadyExists   = errors.New(ErrMessaageDataAlreadyExists)
+	ErrGenerateGuestToken  = errors.New("gagal generate guest token")
 )
 
 type CustomError struct {

@@ -11,8 +11,8 @@ import (
 func AuthRoutes(api fiber.Router, authController *dashboard.AuthController) {
 	auth := api.Group("/auth")
 
-	auth.Post("/validate", authController.ValidateCredentials) // Endpoint pertama
-	auth.Post("/token", authController.GenerateAccessToken)    // Endpoint kedua
+	auth.Post("/validate", authController.ValidateCredentials)
+	auth.Post("/token", authController.GenerateAccessToken)
 
 	auth.Post("/logout", middleware.AuthMiddlewareDashboard(constanta.MenuUserActionRead), authController.LogoutDashboard)
 }

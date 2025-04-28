@@ -32,13 +32,17 @@ type ReqCategoryUpdate struct {
 }
 
 var ReqCategoryUpdateErrorMessage = map[string]string{
-	"ID":        "id required",
-	"Name":      "name required",
-	"Code":      "code required",
+	"ID":            "id required",
+	"Name":          "name required",
+	"Code":          "code required",
 	"UpdateddAtStr": "updated_at required",
 }
 
 func (r *ReqCategoryUpdate) ValidateRequestUpdate() error {
+	if err := r.ValidateUpdatedAt(); err != nil {
+		return err
+	}
+
 	err := utils.ValidateUsername(r.Code)
 	if err != nil {
 		return err

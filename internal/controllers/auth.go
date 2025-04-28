@@ -1,4 +1,4 @@
-package dashboard
+package controllers
 
 import (
 	"pleasurelove/internal/dto/request"
@@ -24,7 +24,7 @@ func NewAuthController(
 	return &AuthController{AuthUsecase: authUC}
 }
 
-func (ctrl *AuthController) LogoutDashboard(c *fiber.Ctx) error {
+func (ctrl *AuthController) Logout(c *fiber.Ctx) error {
 	ctx := utils.GetContext(c)
 
 	authHeader := c.Get("Authorization")
@@ -66,7 +66,7 @@ func (ctrl *AuthController) ValidateCredentials(c *fiber.Ctx) error {
 	}
 
 	// Generate temporary token
-	temporaryToken, err := middleware.GenerateTemporaryToken(user)
+	temporaryToken, err := middleware.GenerateGuestTemporaryToken(user)
 	if err != nil {
 		logger.Error(ctx, "Failed to generate temporary token", err)
 		return response.SetResponseInternalServerError(c, "Failed generate token", err)
@@ -93,7 +93,7 @@ func (ctrl *AuthController) GenerateAccessToken(c *fiber.Ctx) error {
 	}
 
 	// Validasi temporary token
-	user, err := middleware.ValidateTemporaryToken(reqToken.TemporaryToken)
+	user, err := middleware.ValidateGuestTemporaryToken(reqToken.TemporaryToken)
 	if err != nil {
 		logger.Error(ctx, "Invalid temporary token", err)
 		return response.SetResponseUnauthorized(c, "Invalid or expired temporary token", err.Error())
@@ -106,7 +106,7 @@ func (ctrl *AuthController) GenerateAccessToken(c *fiber.Ctx) error {
 		return response.SetResponseUnauthorized(c, errorutils.ErrMessageDataNotFound, err.Error())
 	}
 
-	accessToken, err := middleware.GenerateTokenUserDashboard(user)
+	accessToken, err := middleware.GenerateGuestTokenUserDashboard(user)
 	if err != nil {
 		logger.Error(ctx, "Failed to generate access token", err)
 		return response.SetResponseInternalServerError(c, "Failed to generate access token", err)

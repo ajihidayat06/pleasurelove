@@ -12,10 +12,10 @@ import (
 )
 
 type AuthUseCase interface {
-	LoginDashboard(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error)
 	Login(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error)
+	// Login(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error)
 	LogoutDashboard(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error)
-	Logout(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error)
+	// Logout(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error)
 	LoginByUserId(ctx context.Context, userID int64) (models.UserLogin, error)
 }
 
@@ -31,7 +31,7 @@ func NewAuthUseCase(db *gorm.DB, userRepo repo.UserRepository) AuthUseCase {
 	}
 }
 
-func (u *authUseCase) LoginDashboard(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error) {
+func (u *authUseCase) Login(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error) {
 	// Ambil user dari repository
 	user, err := u.UserRepo.Login(ctx, req.UsernameOrEmail, 0)
 	if err != nil {
@@ -74,14 +74,14 @@ func (u *authUseCase) LoginDashboard(ctx context.Context, req *request.ReqLogin)
 }
 
 // Login implements AuthUseCase.
-func (u *authUseCase) Login(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error) {
-	panic("unimplemented")
-}
+// func (u *authUseCase) Login(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error) {
+// 	panic("unimplemented")
+// }
 
 // Logout implements AuthUseCase.
-func (u *authUseCase) Logout(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error) {
-	panic("unimplemented")
-}
+// func (u *authUseCase) Logout(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error) {
+// 	panic("unimplemented")
+// }
 
 // LogoutDashboard implements AuthUseCase.
 func (u *authUseCase) LogoutDashboard(ctx context.Context, req *request.ReqLogin) (models.UserLogin, error) {

@@ -1,87 +1,145 @@
 # pleasurelove
-web pleasure love
 
-## Dokumentasi Menjalankan Proyek
-### Persiapan Sebelum Menjalankan
+Aplikasi web pleasure love.
+
+## 📦 Dokumentasi Menjalankan Proyek
+
+### 🛠️ Persiapan Sebelum Menjalankan
+
 1. Pastikan Anda memiliki akses ke repository proyek ini.
-2. Instal perangkat lunak berikut di mesin Anda:
-    - **Docker** dan **Docker Compose** (jika menjalankan dengan Docker).
-    - **Go** (jika menjalankan secara lokal).
-3. Periksa apakah Anda memiliki file `.env` (jika diperlukan) dan sesuaikan konfigurasi sesuai kebutuhan.
+2. Instal perangkat lunak berikut:
+   - **Go** (jika menjalankan secara lokal)
+   - **Docker** dan **Docker Compose** (jika menjalankan menggunakan Docker)
+3. Siapkan file `.env` jika diperlukan, dan sesuaikan konfigurasinya.
 
-### Cara Menjalankan
-Ikuti salah satu metode berikut untuk menjalankan proyek:
+---
 
-#### Dengan Docker Compose
-- Jalankan perintah berikut di terminal:
-  ```bash
-  docker-compose up --build
-  ```
-- Akses aplikasi di `http://localhost:8080`.
+### 🚀 Cara Menjalankan Aplikasi
 
-#### Secara Lokal
-- Navigasikan ke direktori proyek:
-  ```bash
-  cd /c:/pleasurelove/pleasurelove
-  ```
-- Instal dependensi:
-  ```bash
-  go mod tidy
-  ```
-- Jalankan aplikasi:
-  ```bash
-  go run main.go
-  ```
-- Akses aplikasi di `http://localhost:8080`.
+#### 💡 Dengan Docker Compose
 
-### Cara Menghentikan
-- **Docker Compose**: Tekan `Ctrl+C` di terminal yang menjalankan Docker Compose, lalu jalankan:
+```bash
+docker-compose up --build
+```
+
+Akses aplikasi di: [http://localhost:8080](http://localhost:8080)
+
+#### 💡 Secara Lokal (Tanpa Docker)
+
+```bash
+cd /c:/pleasurelove/pleasurelove
+go mod tidy
+go run cmd/main.go
+```
+
+Akses aplikasi di: [http://localhost:8080](http://localhost:8080)
+
+---
+
+### 📛 Cara Menghentikan Aplikasi
+
+#### Jika menggunakan Docker:
+
+- Tekan `Ctrl+C` di terminal yang menjalankan Docker Compose.
+- Untuk menghentikan container:
   ```bash
   docker-compose down
   ```
-  **Catatan**: Perintah ini akan menghentikan container tanpa menghapus volume. Data di database akan tetap ada.
-
-  Jika Anda ingin menghapus semua container **dan** volume (termasuk data database), gunakan opsi `-v`:
+- Untuk menghentikan dan menghapus volume (termasuk data database):
   ```bash
   docker-compose down -v
   ```
-  **Peringatan**: Opsi `-v` akan menghapus semua data yang disimpan di volume Docker, termasuk data di database. Gunakan dengan hati-hati.
 
-- **Secara Lokal**: Tekan `Ctrl+C` di terminal yang menjalankan aplikasi Go.
+#### Jika secara lokal:
 
-### Troubleshooting
-- Periksa log terminal untuk pesan kesalahan.
-- Pastikan semua dependensi telah diinstal dan konfigurasi sudah benar.
-- Hubungi pengembang jika masalah berlanjut.
+- Tekan `Ctrl+C` di terminal yang menjalankan aplikasi Go.
 
-### Catatan
-- Pastikan untuk membaca file `docker-compose.yml` atau file konfigurasi lainnya untuk detail lebih lanjut.
-- Jika mengalami masalah, periksa kembali apakah semua dependensi dan variabel lingkungan telah diatur dengan benar.
-- Dokumentasi tambahan dapat ditemukan di file README atau dokumentasi proyek lainnya.
+---
 
-## Menjalankan Aplikasi
+### 🦞 Troubleshooting
 
-#### Mode Normal
-Gunakan perintah berikut untuk menjalankan aplikasi dalam mode normal:
+- Periksa error di terminal saat menjalankan aplikasi.
+- Pastikan semua dependensi telah di-install dan konfigurasi `.env` sudah benar.
+- Jika error berlanjut, hubungi pengembang terkait.
+
+---
+
+### 🥪 Menjalankan Mode Debug
+
+#### Untuk Unix / Mac / Git Bash:
+
 ```bash
+DEBUG_MODE=true docker-compose up
+```
+
+#### Untuk PowerShell (Windows):
+
+```powershell
+$env:DEBUG_MODE="true"
 docker-compose up
 ```
 
-#### Mode Debug
-Gunakan salah satu perintah berikut untuk menjalankan aplikasi dalam mode debug:
+- `DEBUG_MODE=true`: Aplikasi akan berjalan dalam mode debug menggunakan Delve.
 
-- **Untuk Shell Berbasis Unix (Linux/MacOS atau Git Bash di Windows)**:
-  ```bash
-  DEBUG_MODE=true docker-compose up
-  ```
+---
 
-- **Untuk PowerShell (Windows)**:
-  ```powershell
-$env:DEBUG_MODE="true"
-  docker-compose up
-  ```
+## 🔀 Git Branch Workflow
 
-#### Penjelasan
-- **DEBUG_MODE**: Variabel lingkungan yang menentukan mode aplikasi.
-  - `false` (default): Menjalankan aplikasi secara normal.
-  - `true`: Menjalankan aplikasi dalam mode debug menggunakan Delve.
+Proyek ini menggunakan struktur branch yang jelas untuk memudahkan kolaborasi dan deployment.
+
+### 🧹 Struktur Branch
+
+```
+main               → branch utama untuk produksi
+develop            → branch staging (testing sebelum ke production)
+
+feature/*          → fitur baru
+bugfix/*           → perbaikan bug minor
+hotfix/*           → perbaikan cepat langsung ke production
+```
+
+Contoh branch:
+
+- `feature/login-page`
+- `bugfix/cart-total-wrong`
+- `hotfix/fix-payment-crash`
+
+---
+
+### 🔧 Cara Membuat Branch Baru
+
+Semua branch fitur dan bugfix **dibuat dari `main`**.
+
+```bash
+git checkout main
+git checkout -b feature/nama-fitur
+git push -u origin feature/nama-fitur
+```
+
+---
+
+### 🔀 Alur Pengembangan
+
+1. Buat branch dari `main` → `feature/*` atau `bugfix/*`
+2. Lakukan coding dan commit
+3. Merge langsung ke `main` jika sudah siap produksi
+4. Setelah lulus uji QA/test → merge `feature/*` atau `bugfix/*` ke `main`
+5. Tag versi jika perlu:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+---
+
+### 📄 Catatan Tambahan
+
+- Simpan semua penamaan branch dalam format lowercase + dash (`-`)
+- Hindari membuat branch langsung dari `develop` kecuali memang dibutuhkan
+- Dokumentasikan fitur-fitur besar di Notion atau `CHANGELOG.md`
+
+---
+
+📌 *Dokumentasi ini akan terus diperbarui sesuai perkembangan proyek.*
+
